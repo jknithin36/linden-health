@@ -16,7 +16,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { EASE, useReducedMotion } from "@/lib/motion"
-import { focusRing, glass, headerGap, panel, sectionY } from "@/lib/styles"
+import { focusRing, glass, headerGap, sectionY } from "@/lib/styles"
 import {
   specialties,
   specialtiesCopy,
@@ -51,7 +51,7 @@ function ProgressRing({ progress }: { progress: MotionValue<number> }) {
         strokeLinecap="round"
         strokeDasharray={RING_C}
         style={{ strokeDashoffset: offset }}
-        className="text-neutral-950"
+        className="text-white md:text-neutral-950"
       />
     </svg>
   )
@@ -78,13 +78,68 @@ function Backdrop({ specialty }: { specialty: Specialty }) {
   )
 }
 
+/**
+ * Phones: the same light card layout as patient stories — a short photo with a glass chip,
+ * then the name, summary, common visits and actions on white.
+ */
+function SpecialtyCard({ specialty }: { specialty: Specialty }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: EASE }}
+      className="flex flex-col md:hidden"
+    >
+      <div
+        className="relative aspect-video overflow-hidden rounded-[20px] bg-neutral-200"
+        style={specialty.image ? undefined : { backgroundImage: specialty.placeholder }}
+      >
+        {specialty.image && <Image src={specialty.image} alt="" fill sizes="calc(100vw - 48px)" className="object-cover object-[60%_25%]" />}
+        <div className={cn(glass, "absolute bottom-3 left-3 flex max-w-[calc(100%-24px)] items-center gap-2 rounded-full py-1.5 pr-3.5 pl-1.5 text-caption")}>
+          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-white/15">
+            <HugeiconsIcon aria-hidden="true" icon={Calendar03Icon} strokeWidth={1.8} className="size-3.5" />
+          </span>
+          <span className="truncate">
+            {specialtiesCopy.nextAvailable} {specialty.nextAvailable}
+            <span className="text-white/65"> · {specialtiesCopy.doctorCount(specialty.doctorCount)}</span>
+          </span>
+        </div>
+      </div>
+
+      <h3 className="mt-6 text-neutral-950 text-title">{specialty.name}</h3>
+      <p className="mt-2 text-pretty text-neutral-500 text-body">{specialty.summary}</p>
+
+      <p className="mt-6 text-neutral-400 text-caption">{specialtiesCopy.commonVisits}</p>
+      <ul className="mt-2 divide-y divide-neutral-100 border-y border-neutral-100">
+        {specialty.commonVisits.map((visit) => (
+          <li key={visit} className="flex items-center justify-between gap-3 py-3 text-neutral-800 text-body">
+            {visit}
+            <HugeiconsIcon aria-hidden="true" icon={Tick02Icon} strokeWidth={2} className="size-4 shrink-0 text-emerald-600" />
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-6 flex items-center gap-2">
+        <Button size="lg" nativeButton={false} render={<Link href={specialtiesCopy.bookHref(specialty.id)} />} className="flex-1 rounded-full text-caption">
+          {specialtiesCopy.book}
+        </Button>
+        <Button variant="outline" size="lg" nativeButton={false} render={<Link href={specialty.href} />} className="rounded-full text-caption">
+          {specialtiesCopy.learnMore}
+          <HugeiconsIcon aria-hidden="true" icon={ArrowRight01Icon} strokeWidth={1.8} data-icon="inline-end" className="size-3.5" />
+        </Button>
+      </div>
+    </motion.div>
+  )
+}
+
+/** Tablet and up: copy, common visits and booking card over the full-bleed photo. */
 function SpecialtyPanel({ specialty }: { specialty: Specialty }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE }}
-      className="flex flex-1 flex-col justify-between gap-12"
+      className="hidden flex-1 flex-col justify-between gap-12 md:flex"
     >
       <div className="max-w-md">
         <h3 className="text-white text-heading">{specialty.name}</h3>
@@ -211,26 +266,29 @@ export function Specialties() {
             if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false)
           }}
           className={cn(
-            panel,
             headerGap,
-            "relative min-h-[min(860px,calc(100svh-32px))] gap-0 overflow-hidden bg-neutral-800"
+            "relative gap-0 px-6",
+            // From md up: the rounded dark panel with the photo filling it.
+            "md:mx-4 md:min-h-[min(860px,calc(100svh-32px))] md:overflow-hidden md:rounded-[32px] md:bg-neutral-800 md:px-0"
           )}
         >
-          <Backdrop specialty={active} />
+          <div aria-hidden="true" className="hidden md:block">
+            <Backdrop specialty={active} />
+          </div>
           {/* Black gradients so the white copy stays legible on any photo */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden md:block">
             <div className="absolute inset-0 bg-black/10" />
             <div className="absolute inset-0 hidden bg-linear-to-r from-black/60 from-0% via-black/25 via-40% to-transparent to-70% lg:block" />
             <div className="absolute inset-0 bg-linear-to-t from-black/60 from-0% via-black/20 via-40% to-transparent to-70%" />
           </div>
 
-          <div className="relative flex flex-1 flex-col gap-8 px-6 pt-24 pb-6 sm:px-10 sm:pt-28 sm:pb-10 lg:px-14 lg:pb-14">
+          <div className="relative flex flex-1 flex-col gap-6 md:gap-8 md:px-10 md:pt-28 md:pb-10 lg:px-14 lg:pb-14">
             <div className="flex items-center gap-3">
               <LayoutGroup>
                 <TabsList
                   activateOnFocus
                   aria-label={specialtiesCopy.tabsLabel}
-                  className="-ml-6 w-auto min-w-0 justify-start gap-2 overflow-x-auto overflow-y-hidden rounded-none bg-transparent pl-6 scrollbar-none group-data-horizontal/tabs:h-auto sm:ml-0 sm:pl-0"
+                  className="-ml-6 w-auto min-w-0 justify-start gap-2 overflow-x-auto overflow-y-hidden rounded-none bg-transparent pl-6 scrollbar-none group-data-horizontal/tabs:h-auto md:ml-0 md:pl-0"
                 >
                   {specialties.map((specialty, index) => {
                     const isActive = specialty.id === activeId
@@ -241,15 +299,16 @@ export function Specialties() {
                         aria-label={specialty.name}
                         render={<motion.button layout />}
                         className={cn(
-                          "h-10 flex-none gap-2 rounded-full border-0 px-1.5 py-0 text-white/80 hover:text-white",
-                          "data-active:bg-white/85 data-active:pr-4 data-active:text-neutral-950 data-active:hover:text-neutral-950 data-active:backdrop-blur-md text-caption"
+                          "h-10 flex-none gap-2 rounded-full border-0 px-1.5 py-0 text-neutral-600 hover:text-neutral-950 md:text-white/80 md:hover:text-white",
+                          "data-active:bg-neutral-950 data-active:pr-4 data-active:text-white data-active:hover:text-white",
+                          "md:data-active:bg-white/85 md:data-active:text-neutral-950 md:data-active:hover:text-neutral-950 md:data-active:backdrop-blur-md text-caption"
                         )}
                       >
                         <motion.span
                           layout="position"
                           className={cn(
                             "relative grid size-7 place-items-center rounded-full ring-1 tabular-nums",
-                            isActive ? "ring-neutral-950/15" : "ring-white/40",
+                            isActive ? "ring-white/25 md:ring-neutral-950/15" : "ring-neutral-300 md:ring-white/40",
                             "text-micro"
                           )}
                         >
@@ -273,7 +332,11 @@ export function Specialties() {
                   size="icon-lg"
                   onClick={() => setUserPaused((p) => !p)}
                   aria-label={userPaused ? specialtiesCopy.play : specialtiesCopy.pause}
-                  className={cn(glass, "ml-auto shrink-0 rounded-full hover:bg-neutral-900/70 hover:text-white", focusRing.light)}
+                  className={cn(
+                    "ml-auto shrink-0 rounded-full border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-100 hover:text-neutral-950",
+                    "md:border-white/10 md:bg-neutral-900/55 md:text-white md:backdrop-blur-xl md:hover:bg-neutral-900/70 md:hover:text-white",
+                    focusRing.current
+                  )}
                 >
                   <HugeiconsIcon aria-hidden="true" icon={userPaused ? PlayIcon : PauseIcon} strokeWidth={1.8} />
                 </Button>
@@ -282,6 +345,7 @@ export function Specialties() {
 
             {specialties.map((specialty) => (
               <TabsContent key={specialty.id} value={specialty.id} className="flex flex-col">
+                <SpecialtyCard specialty={specialty} />
                 <SpecialtyPanel specialty={specialty} />
               </TabsContent>
             ))}
