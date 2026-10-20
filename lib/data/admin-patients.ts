@@ -1,0 +1,103 @@
+// Fictional data for demo purposes only.
+// Copy for /admin/patients and the patient chart (/admin/patients/[id]).
+
+import { categoryLabel } from "@/lib/data/admin-billing"
+
+export const patientsCopy = {
+  newPatient: "New patient",
+  search: "Search name, MRN, DOB, phone or email…",
+  facets: {
+    primaryDoctorId: "Primary provider",
+    insuranceCategory: "Insurance",
+    ageGroup: "Age",
+    flags: "Flags",
+    clinic: "Clinic",
+    balance: "Balance",
+    newThisMonth: "New patients",
+  },
+  insuranceCategory: { ...categoryLabel, "self-pay": "Self-pay" } as Record<string, string>,
+  balance: { "has-balance": "Has a balance", none: "No balance" } as Record<string, string>,
+  newThisMonth: { new: "Added in the last 30 days", existing: "Existing patients" } as Record<string, string>,
+  bulk: {
+    message: "Send message",
+    export: "Export",
+    sent: (n: number) => `Message sent to ${n} patient${n === 1 ? "" : "s"} through the portal`,
+    exported: (n: number) => `Exported ${n} patient${n === 1 ? "" : "s"}`,
+  },
+  empty: {
+    filtered: { title: "No patients match", text: "Try a different search or remove a filter." },
+    none: { title: "No patients yet", text: "Add your first patient to start a chart." },
+    clear: "Clear filters",
+  },
+}
+
+export const chartCopy = {
+  back: "Patients",
+  notFound: { title: "Patient not found", text: "This chart may have been removed, or the link is wrong.", action: "Back to patients" },
+  actions: { book: "New appointment", message: "Message", edit: "Edit", pay: "Record payment" },
+  labels: {
+    dob: "Date of birth",
+    phone: "Phone",
+    email: "Email",
+    insurance: "Insurance",
+    memberId: "Member ID",
+    primary: "Primary provider",
+    clinic: "Preferred clinic",
+    address: "Address",
+    allergies: "Allergies",
+    noAllergies: "No known allergies",
+    selfPay: "Self-pay",
+  },
+  tabs: [
+    { id: "overview", label: "Overview" },
+    { id: "visits", label: "Visits" },
+    { id: "vitals", label: "Vitals" },
+    { id: "results", label: "Results" },
+    { id: "medications", label: "Medications" },
+    { id: "billing", label: "Billing" },
+    { id: "messages", label: "Messages" },
+    { id: "documents", label: "Documents" },
+    { id: "activity", label: "Activity" },
+  ] as const,
+  overview: {
+    next: "Next visit",
+    noNext: "No upcoming visits",
+    book: "Book a visit",
+    recent: "Recent visits",
+    noRecent: "No completed visits yet.",
+    balance: "Balance",
+    paidUp: "Paid in full",
+    tasks: "Open tasks",
+    noTasks: "Nothing open. All caught up.",
+    conditions: "Conditions",
+    noConditions: "No conditions on file.",
+    careNotes: "Care notes",
+    noNotes: "No care notes yet.",
+  },
+  visits: { upcoming: "Upcoming", past: "Past", all: "All", empty: "No visits in this view." },
+  vitals: {
+    empty: { title: "No vitals yet", text: "Vitals are recorded at in-person visits." },
+    normal: "Shaded band: normal range",
+    kidsNote: "Children’s weight and BMI are read against growth charts, so no adult band is shown.",
+    charts: { bp: "Blood pressure", weight: "Weight", bmi: "BMI", hr: "Heart rate" },
+  },
+  results: { empty: { title: "No results on file", text: "Lab and test results show up here once they’re reviewed." }, note: "Doctor’s note", inRange: (n: number, total: number) => `${n} of ${total} in range` },
+  meds: {
+    active: "Active medications",
+    noActive: "No active medications on file.",
+    refills: "Refill requests",
+    noRefills: "No refill requests.",
+    approve: "Approve",
+    deny: "Deny",
+  },
+  billing: { balance: "Patient balance", lastPayment: "Last payment", plan: "Payment plan", noPlan: "Not on a payment plan", claims: "Claims", payments: "Payments", noClaims: "No claims yet.", noPayments: "No payments yet." },
+  messages: { empty: { title: "No messages", text: "Conversations with this patient show up here." }, open: "Open in inbox" },
+  documents: { empty: { title: "No documents", text: "Forms, cards and outside records show up here." }, download: "Download", demo: "Demo only. Downloads are turned off." },
+  activity: { empty: { title: "No activity yet", text: "Changes to this chart are logged here." } },
+  edit: {
+    title: "Edit patient",
+    description: "Contact, coverage and care details. Changes are logged to the chart.",
+    save: "Save changes",
+    conditions: "Conditions (comma separated)",
+  },
+}

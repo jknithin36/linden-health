@@ -1,0 +1,76 @@
+/*
+ * Site type scale: the one place to change font sizes, line heights, letter spacing and weights.
+ *
+ * Each token becomes a Tailwind class that sets all four at once:
+ *   text-display  hero headlines          36px → 52px at 1440 → 64px
+ *   text-heading  page and section h1/h2  28px → 42px at 1440 → 44px
+ *   text-page     app page titles (admin)  26px
+ *   text-title    card titles, big links  20px
+ *   text-lead     section intros          16px → 18px from md
+ *   text-body     supporting copy         14px
+ *   text-caption  labels, nav, fine print 12px
+ *   text-micro    tiny secondary lines    11px
+ *
+ * DM Sans is loaded with its optical-size axis, so small text gets sturdier shapes and
+ * looser spacing on its own, and large text tighter; tracking here stays close to 0.
+ * Line heights sit on a 4px grid: ~1.5 for reading text, tighter for headings.
+ *
+ * Weights: font-regular (the site weight) and font-emphasis (inline <strong>).
+ * `leading-*` and `tracking-*` still override a token when one spot needs it.
+ * New names must also be added to the `cn` config in lib/utils.ts so classes merge correctly.
+ */
+
+@theme {
+  --font-weight-regular: 400;
+  --font-weight-emphasis: 560;
+
+  --text-display: clamp(2.25rem, 1rem + 2.5vw, 4rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.01em;
+  --text-display--font-weight: 400;
+
+  --text-heading: clamp(1.75rem, 1rem + 1.8vw, 2.75rem);
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -0.005em;
+  --text-heading--font-weight: 400;
+
+  --text-page: 26px;
+  --text-page--line-height: 32px;
+  --text-page--letter-spacing: -0.005em;
+  --text-page--font-weight: 400;
+
+  --text-title: 20px;
+  --text-title--line-height: 28px;
+  --text-title--letter-spacing: 0;
+  --text-title--font-weight: 400;
+
+  --text-lead: 16px;
+  --text-lead--line-height: 24px;
+  --text-lead--letter-spacing: 0;
+  --text-lead--font-weight: 400;
+
+  --text-body: 14px;
+  --text-body--line-height: 22px;
+  --text-body--letter-spacing: 0;
+  --text-body--font-weight: 400;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 18px;
+  --text-caption--letter-spacing: 0;
+  --text-caption--font-weight: 400;
+
+  --text-micro: 11px;
+  --text-micro--line-height: 16px;
+  --text-micro--letter-spacing: 0.005em;
+  --text-micro--font-weight: 400;
+}
+
+/* Lead copy steps up a size from md (48rem). */
+@layer base {
+  @media (width >= 48rem) {
+    :root {
+      --text-lead: 18px;
+      --text-lead--line-height: 28px;
+    }
+  }
+}
