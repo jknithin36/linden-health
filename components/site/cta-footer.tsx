@@ -78,9 +78,52 @@ function CtaPhoto() {
   )
 }
 
+/**
+ * Phones: the same light card layout as patient stories and specialties — a short photo with a
+ * glass chip, then the heading, checks and buttons on white.
+ */
+function CtaCard({ reduceMotion }: { reduceMotion: boolean }) {
+  return (
+    <motion.section variants={fadeUp} {...revealOnView(reduceMotion, 0.2)} aria-labelledby="cta-heading-mobile" className="px-6 pt-12 pb-10 md:hidden">
+      <div className="relative aspect-video overflow-hidden rounded-[20px] bg-neutral-200" style={ctaPhoto ? undefined : { backgroundImage: ctaPlaceholder }}>
+        {ctaPhoto && <Image src={ctaPhoto.tablet} alt={ctaPhoto.alt} fill sizes="calc(100vw - 48px)" className="object-cover object-[50%_30%]" />}
+        <p className="absolute bottom-3 left-3 flex max-w-[calc(100%-24px)] items-center gap-2 rounded-full border border-white/10 bg-neutral-900/55 py-1.5 pr-3.5 pl-1.5 text-white backdrop-blur-xl text-caption">
+          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-white/15">
+            <HugeiconsIcon aria-hidden="true" icon={Clock01Icon} strokeWidth={1.8} className="size-3.5" />
+          </span>
+          <span className="truncate">{cta.eyebrow}</span>
+        </p>
+      </div>
+
+      <h2 id="cta-heading-mobile" className="mt-6 text-neutral-950 text-heading">
+        {cta.heading}
+      </h2>
+
+      <ul className="mt-6 divide-y divide-neutral-100 border-y border-neutral-100">
+        {cta.checks.map((check) => (
+          <li key={check.id} className="flex items-center gap-3 py-3 text-neutral-800 text-body">
+            <HugeiconsIcon aria-hidden="true" icon={CHECK_ICONS[check.id]} strokeWidth={1.8} className="size-[18px] shrink-0 text-neutral-500" />
+            {check.label}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-6 flex items-center gap-2">
+        <Button size="lg" nativeButton={false} render={<Link href={cta.primary.href} />} className="flex-1 rounded-full text-caption">
+          {cta.primary.label}
+        </Button>
+        <Button variant="outline" size="lg" nativeButton={false} render={<Link href={cta.secondary.href} />} className="flex-1 rounded-full text-caption">
+          {cta.secondary.label}
+        </Button>
+      </div>
+    </motion.section>
+  )
+}
+
+/** Tablet and up: the CTA on a full-screen photo that the footer card slides over. */
 function Cta({ reduceMotion }: { reduceMotion: boolean }) {
   return (
-    <div className="sticky top-0 z-0 h-svh overflow-hidden bg-neutral-900">
+    <div className="sticky top-0 z-0 hidden h-svh overflow-hidden bg-neutral-900 md:block">
       <CtaPhoto />
       <div aria-hidden="true" className="absolute inset-0 bg-linear-to-r from-black/55 via-black/20 to-transparent" />
       <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-black/85 from-0% via-black/50 via-40% to-transparent to-65% sm:hidden" />
@@ -417,6 +460,7 @@ export function CtaFooter() {
 
   return (
     <div className="relative mt-4">
+      <CtaCard reduceMotion={reduceMotion} />
       <Cta reduceMotion={reduceMotion} />
       <FooterCard reduceMotion={reduceMotion} />
     </div>
